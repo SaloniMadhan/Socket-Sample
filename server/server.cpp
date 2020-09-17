@@ -1,13 +1,19 @@
 #include <stdio.h> 
 #include <stdlib.h> 
 #include <string.h> 
-
-
+#include<iostream>
+#include<sstream>  
 #include <winsock2.h>
 
 #pragma comment(lib,"ws2_32.lib") //Winsock Library
-
+using namespace std;
 const int PORT = 8080;
+
+struct Certificate
+{
+	char name[38];
+	unsigned int hash;
+}C;
 
 void initWinSock()
 {
@@ -29,6 +35,7 @@ int main()
 	struct sockaddr_in address; 
 	int addrlen = sizeof(address); 
 	char buffer[1024] = {0}; 
+	char data[1024] = { 0 };
 	const char *hello = "Hello from server"; 
 	
 	initWinSock();
@@ -64,7 +71,18 @@ int main()
 		perror("accept"); 
 		exit(EXIT_FAILURE); 
 	} 
+	std::cout << "Enter Certificate name and hash value\n";
+	cin>> C.name>>C.hash;
+	stringstream sn;
+	sn >> C.name >> C.hash;
+	//std::string tmp = std::string{ sn.str() };
+	strcpy_s(data,sn.str().c_str());
+	auto e = WSAGetLastError();
+	printf("%s",data);
+	int s=send(new_socket,(char*) &data, sizeof(data), 0);
+	auto e1 = WSAGetLastError();
 	printf("Waiting for data...\n");
+	
 	recv( new_socket , buffer, 1024, 0); 
 	printf("Received: %s\n",buffer ); 
 	send(new_socket , hello , strlen(hello) , 0 ); 

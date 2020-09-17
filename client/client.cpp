@@ -1,11 +1,11 @@
 #include <stdio.h> 
 #include <string.h> 
-
+#include<iostream>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 
 #pragma comment(lib,"ws2_32.lib") //Winsock Library
-
+using namespace std;
 const int PORT = 8080;
 
 void initWinSock()
@@ -51,9 +51,14 @@ int main()
 		printf("\nConnection Failed \n"); 
 		return -1; 
 	} 
+	auto e = WSAGetLastError();
+	int s=recv(sock, buffer, sizeof(buffer), 0);
+	cout << typeid(buffer).name();
+	auto e1 = WSAGetLastError();
+	for (int i = 0; i < 10; i++)
+		cout << buffer[i];
+	//printf("Received: %s\n", buffer);
 	send(sock , hello , strlen(hello) , 0 ); 
 	printf("Hello message sent\n"); 
-	recv( sock , buffer, 1024, 0); 
-	printf("Received: %s\n",buffer ); 
 	return 0; 
 } 
